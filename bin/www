@@ -1,0 +1,19 @@
+#!/usr/bin/env node
+require('dotenv').config();
+const chalk = require('chalk');
+const app = require('../app');
+const { sequelize } = require('../models');
+
+const port = process.env.PORT || 3000;
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    await sequelize.sync(); // crea tablas si no existen (no borra datos)
+    console.log(chalk.green(`BD conectada (${sequelize.getDialect()})`));
+    app.listen(port, () => console.log(chalk.green(`Servidor en http://localhost:${port}`)));
+  } catch (err) {
+    console.error(chalk.red(`[ERROR CRÍTICO] No se pudo iniciar: ${err.stack}`));
+    process.exit(1);
+  }
+})();
